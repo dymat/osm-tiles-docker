@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GPX Viewer by Denny Mattern</title>
+</head>
+<link rel="stylesheet" href="leaflet.css" />
+
+<script src="jquery.min.js"></script>
+<script src="leaflet.js"></script>
+<script src="gpx.min.js"></script>
+
+<style>
+    #map { height: 400px; }
+</style>
+
+
+<body>
+
+    <div id="map"></div>
+    <br/>
+    <button onclick="document.getElementById('file-input').click();">Open GPX</button>
+    <input id="file-input" type="file" name="name" style="display: none;" />
+
+    <br/>
+
+    <textarea id="content"></textarea>
+
+    <script>
+        var map = L.map('map').setView([52.525, 13.3834], 13);
+        L.tileLayer('/osm_tiles/{z}/{x}/{y}.png', {
+            attribution: '',
+            maxZoom: 18,
+        }).addTo(map);
+
+
+        $(function () {
+           $('#file-input').on('change', function (e) {
+               var file = e.target.files[0];
+               if (!file) {
+                   return;
+               }
+
+               var reader = new FileReader();
+               reader.onload = function(e) {
+                   var contents = e.target.result;
+                   displayContents(contents);
+               };
+               reader.readAsText(file);
+
+           });
+
+            function displayContents(contents) {
+                var element = document.getElementById('content');
+                element.innerHTML = contents;
+
+                var gpx = contents; // URL to your GPX file or the GPX itself
+                new L.GPX(gpx, {async: true}).on('loaded', function(e) {
+                    map.fitBounds(e.target.getBounds());
+                }).addTo(map);
+            }
+        });
+
+    </script>
+
+</body>
+</html>
