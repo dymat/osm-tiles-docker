@@ -5,7 +5,7 @@ services:
     # build: ./osm-tiles
     image: osmtw/osm-tiles:latest
     ports:
-        - "8080:80"
+        - "127.0.0.1:8080:80"
     links:
         - postgis:pg
     environment:
@@ -21,13 +21,14 @@ services:
     links:
         - postgis:pg
     volumes:
-        - osm:/osm:rw
+        - ./osm:/osm:rw
     environment:
         - PG_ENV_POSTGRES_DB=postgres
         - PG_ENV_POSTGRES_PASSWORD=pa55w0rd
         - PG_ENV_POSTGRES_USER=postgres
         - PG_PORT_5432_TCP_ADDR=pg
         - PG_PORT_5432_TCP_PORT=5432
+        - REGION=europe/germany
     depends_on:
         - postgis
   postgis:
@@ -37,7 +38,5 @@ services:
         - POSTGRES_DB=postgres
         - POSTGRES_PASSWORD=pa55w0rd
     volumes:
-        - osmdb:/var/lib/postgresql/data
-volumes:
-  osmdb:
-  osm:
+        - ./osmdb:/var/lib/postgresql/data
+
